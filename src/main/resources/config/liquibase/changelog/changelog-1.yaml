@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: scarpini
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: movie
+      changes:
+        - createTable:
+            tableName: movie
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: released_on
+                  type: INT8
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: studios
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: producers
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: winner
+                  type: VARCHAR(255)
+  - changeSet:
+      id: 2
+      author: scarpini
+      changes:
+        - loadData:
+            file: config/liquibase/changelog/migration/movielist.csv
+            tableName: movie
+            columns:
+              - column:
+                  name: title
+                  type: STRING
+              - column:
+                  name: released_on
+                  type: int8
+              - column:
+                  name: studios
+                  type: STRING
+              - column:
+                  name: producers
+                  type: STRING
+              - column:
+                  name: winner
+                  type: STRING
