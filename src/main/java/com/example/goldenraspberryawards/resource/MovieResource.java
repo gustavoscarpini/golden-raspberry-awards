@@ -1,6 +1,8 @@
 package com.example.goldenraspberryawards.resource;
 
 import com.example.goldenraspberryawards.model.Movie;
+import com.example.goldenraspberryawards.model.dto.ProducerIntervalRespose;
+import com.example.goldenraspberryawards.model.dto.MinMaxIntervalProducerResponse;
 import com.example.goldenraspberryawards.service.MovieService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +42,14 @@ public class MovieResource {
         }
     }
 
-    @PutMapping("/{id}")
+    @GetMapping("/max-interval")
+    public ResponseEntity<MinMaxIntervalProducerResponse> getMax() {
+        List<ProducerIntervalRespose> producerWithMaxInterval = movieService.getProducerWithMaxInterval();
+        List<ProducerIntervalRespose> producerWithMinInterval = movieService.getProducersWithMinInterval();
+        return ResponseEntity.ok(MinMaxIntervalProducerResponse.builder().max(producerWithMaxInterval).min(producerWithMinInterval).build());
+    }
+
+    @PutMapping("/{id}")//TODO conferir esse update com id no path, ou só com body
     public ResponseEntity<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie movieDetails) {
         Movie updatedMovie = movieService.update(id, movieDetails);
         if (updatedMovie != null) {
