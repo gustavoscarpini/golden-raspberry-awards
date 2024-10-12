@@ -4,7 +4,6 @@ import com.example.goldenraspberryawards.model.Movie;
 import com.example.goldenraspberryawards.model.dto.Producer;
 import com.example.goldenraspberryawards.model.dto.ProducerIntervalRespose;
 import com.example.goldenraspberryawards.repository.MovieRepository;
-import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public class MovieService {
 
     public List<ProducerIntervalRespose> getProducerWithMaxInterval() {
         int maxInterval = 0;
-        List<ProducerIntervalRespose> result = Lists.newArrayList();
+        List<ProducerIntervalRespose> result = new ArrayList<>();
         // Itera sobre os grupos de filmes por produtor
         for (Producer producer : getAllMoviesGroupByProducer()) {
             // Para cada produtor, calcula o intervalo entre prêmios consecutivos
