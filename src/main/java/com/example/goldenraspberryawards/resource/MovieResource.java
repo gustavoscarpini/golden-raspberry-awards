@@ -102,7 +102,7 @@ public class MovieResource {
     })
     @GetMapping("/statistics")
     public ResponseEntity<MinMaxIntervalProducerDTO> getStatistics() {
-        List<ProducerIntervalDTO> producerWithMaxInterval = movieService.getProducerWithMaxInterval();
+        List<ProducerIntervalDTO> producerWithMaxInterval = movieService.getProducersWithMaxInterval();
         List<ProducerIntervalDTO> producerWithMinInterval = movieService.getProducersWithMinInterval();
         return ResponseEntity.ok(MinMaxIntervalProducerDTO.builder().max(producerWithMaxInterval).min(producerWithMinInterval).build());
     }

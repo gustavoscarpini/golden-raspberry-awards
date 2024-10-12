@@ -52,46 +52,40 @@ public class MovieService {
         }).orElse(false);
     }
 
-    public List<ProducerIntervalDTO> getProducersWithMinInterval() {
-        int minInterval = Integer.MAX_VALUE;
+    public List<ProducerIntervalDTO> getProducersWithInterval(boolean isMax) {
+        int limit = isMax ? 0 : Integer.MAX_VALUE;
         List<ProducerIntervalDTO> result = new ArrayList<>();
         for (ProducerDTO producerDTO : getAllMoviesGroupByProducer()) {
-            for (int i = 1; i < producerDTO.getMovies().size(); i++) {
-                int interval = producerDTO.getMovies().get(i).getReleasedOn() - producerDTO.getMovies().get(i - 1).getReleasedOn();
-                if (interval > 0) {
-                    minInterval = getMaxInterval(minInterval, result, producerDTO.getName(), producerDTO.getMovies(), i, interval, interval < minInterval);
+            List<Movie> movies = producerDTO.getMovies();
+            for (int i = 1; i < movies.size(); i++) {
+                int intervalo = movies.get(i).getReleasedOn() - movies.get(i - 1).getReleasedOn();
+                if ((isMax && intervalo > limit) || (!isMax && intervalo > 0 && intervalo < limit)) {
+                    limit = intervalo;
+                    result.clear();
+                    addIntervalToResult(result, producerDTO.getName(), movies, i, intervalo);
+                } else if (intervalo == limit) {
+                    addIntervalToResult(result, producerDTO.getName(), movies, i, intervalo);
                 }
             }
         }
         return result;
     }
 
-    public List<ProducerIntervalDTO> getProducerWithMaxInterval() {
-        int maxInterval = 0;
-        List<ProducerIntervalDTO> result = new ArrayList<>();
-        for (ProducerDTO producerDTO : getAllMoviesGroupByProducer()) {
-            for (int i = 1; i < producerDTO.getMovies().size(); i++) {
-                int interval = producerDTO.getMovies().get(i).getReleasedOn() - producerDTO.getMovies().get(i - 1).getReleasedOn();
-                maxInterval = getMaxInterval(maxInterval, result, producerDTO.getName(), producerDTO.getMovies(), i, interval, interval > maxInterval);
-            }
-        }
-        return result;
+    private void addIntervalToResult(List<ProducerIntervalDTO> result, String producer, List<Movie> producerMovies, int i, int interval) {
+        result.add(ProducerIntervalDTO.builder()
+                .producer(producer)
+                .interval(interval)
+                .previousWin(producerMovies.get(i - 1).getReleasedOn())
+                .followingWin(producerMovies.get(i).getReleasedOn())
+                .build());
     }
 
-    private int getMaxInterval(int maxInterval, List<ProducerIntervalDTO> result, String producer, List<Movie> producerMovies, int i, int interval, boolean adicionar) {
-        if (adicionar) {
-            maxInterval = interval;
-            result.clear();
-        }
-        if (interval == maxInterval || adicionar) {
-            result.add(ProducerIntervalDTO.builder()
-                    .producer(producer)
-                    .interval(maxInterval)
-                    .previousWin(producerMovies.get(i - 1).getReleasedOn())
-                    .followingWin(producerMovies.get(i).getReleasedOn())
-                    .build());
-        }
-        return maxInterval;
+    public List<ProducerIntervalDTO> getProducersWithMinInterval() {
+        return getProducersWithInterval(false);
+    }
+
+    public List<ProducerIntervalDTO> getProducersWithMaxInterval() {
+        return getProducersWithInterval(true);
     }
 
     private List<ProducerDTO> getAllMoviesGroupByProducer() {

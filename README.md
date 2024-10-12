@@ -104,6 +104,14 @@ docker run -p 8080:8080 goldenraspberryawards
 http://localhost:8080/swagger-ui.html
 ```
 
+
+#### Integração Contínua e Entrega Contínua (CI/CD)
+
+Este projeto utiliza GitHub Actions para automatizar o processo de CI/CD. As configurações incluem:
+
+- Publicação de Imagem no Docker Hub: A imagem do Docker é construída e publicada automaticamente no Docker Hub sempre que há uma nova atualização no repositório.
+- Análise de Qualidade do Código com SonarCloud: O código é analisado no SonarCloud para garantir que atenda aos padrões de qualidade e segurança antes da publicação.
+
 [github-actions-generator-image]:https://github.com/gustavoscarpini/golden-raspberry-awards/actions/workflows/build-docker.yml/badge.svg
 [github-actions-build-image]:https://github.com/gustavoscarpini/golden-raspberry-awards/actions/workflows/qa.yml/badge.svg
 [github-actions-url]: https://github.com/gustavoscarpini/golden-raspberry-awards/actions
