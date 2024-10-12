@@ -38,6 +38,7 @@ jobs:
       - name: Run SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_URL: https://sonarcloud.io
         run: |
           mvn sonar:sonar \
           -Dsonar.projectKey=gustavoscarpini_golden-raspberry-awards \
