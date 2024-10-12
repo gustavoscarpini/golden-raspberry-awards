@@ -40,8 +40,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn sonar:sonar \
-          -Dsonar.projectKey=seu-usuario_projeto \
-          -Dsonar.organization=seu-usuario \
+          -Dsonar.projectKey=gustavoscarpini_golden-raspberry-awards \
+          -Dsonar.organization=gustavoscarpini \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
