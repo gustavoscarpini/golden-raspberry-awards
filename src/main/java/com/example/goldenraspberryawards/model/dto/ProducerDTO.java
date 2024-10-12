@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Producer {
+public class ProducerDTO {
     String name;
     List<Movie> movies;
 }

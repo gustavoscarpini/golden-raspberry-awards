@@ -36,9 +36,6 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     nullable: true
-              - column:
-                  name: winner
-                  type: VARCHAR(255)
   - changeSet:
       id: 2
       author: scarpini
@@ -50,15 +47,15 @@ databaseChangeLog:
               - column:
                   name: title
                   type: STRING
+                  valueComputed: "TRIM(title)"
               - column:
                   name: released_on
                   type: int8
               - column:
                   name: studios
                   type: STRING
+                  valueComputed: "TRIM(studios)"
               - column:
                   name: producers
                   type: STRING
-              - column:
-                  name: winner
-                  type: STRING
+                  valueComputed: "TRIM(producers)"

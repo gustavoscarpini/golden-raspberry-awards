@@ -18,5 +18,4 @@ public class Movie {
     private String title;
     private String studios;
     private String producers;
-    private String winner;
 }

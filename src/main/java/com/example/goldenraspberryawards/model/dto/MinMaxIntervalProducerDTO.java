@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MinMaxIntervalProducerResponse {
-    private List<ProducerIntervalRespose> min;
-    private List<ProducerIntervalRespose> max;
+public class MinMaxIntervalProducerDTO {
+    private List<ProducerIntervalDTO> min;
+    private List<ProducerIntervalDTO> max;
 }
