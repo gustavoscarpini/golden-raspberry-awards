@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class MovieStatisticsIntegrationTest {
+class MovieStatisticsIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -36,7 +36,7 @@ public class MovieStatisticsIntegrationTest {
     private final String API_PATH = "/api/v1/movies";
 
     @Test
-    public void createFourMovies_CompareMinInterval() throws Exception {
+    void createFourMovies_CompareMinInterval() throws Exception {
         Movie movie = createSameMovieByYears(Lists.newArrayList(1999, 2008, 2009, 2014));
         mockMvc.perform(get(API_PATH + "/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -50,7 +50,7 @@ public class MovieStatisticsIntegrationTest {
 
 
     @Test
-    public void createFourMovies_CompareMaxIntervalConsecutive() throws Exception {
+    void createFourMovies_CompareMaxIntervalConsecutive() throws Exception {
         Movie movie = createSameMovieByYears(Lists.newArrayList(1993, 1995, 1999, 2001));
         mockMvc.perform(get(API_PATH + "/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -64,7 +64,7 @@ public class MovieStatisticsIntegrationTest {
     }
 
     @Test
-    public void createMovies_CompareMinAndMaxIntervalConsecutive() throws Exception {
+    void createMovies_CompareMinAndMaxIntervalConsecutive() throws Exception {
         Movie firstMin = createSameMovieByYears(Lists.newArrayList(1990, 2000, 2008, 2009));
         Movie secondtMin = createSameMovieByYears(Lists.newArrayList(2001, 2018, 2019));
 
@@ -80,6 +80,7 @@ public class MovieStatisticsIntegrationTest {
 
         MinMaxIntervalProducerDTO minMaxInterval = objectMapper.readValue(result.getResponse().getContentAsString(), MinMaxIntervalProducerDTO.class);
         Assertions.assertThat(minMaxInterval.getMin())
+                .isNotEmpty()
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("producer")
                 .containsExactlyInAnyOrder(
                         ProducerIntervalDTO.builder()
@@ -103,6 +104,7 @@ public class MovieStatisticsIntegrationTest {
                 );
 
         Assertions.assertThat(minMaxInterval.getMax())
+                .isNotEmpty()
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("producer")
                 .containsExactlyInAnyOrder(
                         ProducerIntervalDTO.builder()
@@ -122,7 +124,7 @@ public class MovieStatisticsIntegrationTest {
     }
 
     @Test
-    public void createMovies_ComparedMaxIntervalNotConsecutive() throws Exception {
+     void createMovies_ComparedMaxIntervalNotConsecutive() throws Exception {
         Movie firstMax = createSameMovieByYears(Lists.newArrayList(1900, 1999, 2000));
 
         MvcResult result = mockMvc.perform(get(API_PATH + "/statistics")
@@ -133,6 +135,7 @@ public class MovieStatisticsIntegrationTest {
 
         MinMaxIntervalProducerDTO minMaxInterval = objectMapper.readValue(result.getResponse().getContentAsString(), MinMaxIntervalProducerDTO.class);
         Assertions.assertThat(minMaxInterval.getMax())
+                .isNotEmpty()
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("producer")
                 .doesNotContain( ProducerIntervalDTO.builder()
                         .producer(firstMax.getProducers())

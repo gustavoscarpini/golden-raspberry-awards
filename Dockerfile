@@ -20,6 +20,7 @@ COPY --from=build /app/target/*.jar /app/app.jar
 
 #unzip jar
 RUN jar xvf /app/app.jar
+
 #list java modules
 RUN  jdeps  --ignore-missing-deps -q  \
       --recursive  \
