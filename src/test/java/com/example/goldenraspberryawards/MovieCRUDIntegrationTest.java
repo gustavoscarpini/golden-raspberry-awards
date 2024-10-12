@@ -29,12 +29,11 @@ public class MovieCRUDIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
     private final Faker faker = new Faker();
-    private final String API_PATH = "/api/v1/movies";
 
     @Test
     public void createMovie_ReturnWithIdNotEmpty() throws Exception {
         Movie movie = getValidMovieWithouId();
-        mockMvc.perform(post(API_PATH)
+        mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(movie)))
                 .andExpect(status().isCreated())
@@ -44,15 +43,15 @@ public class MovieCRUDIntegrationTest {
     @Test
     public void createTwoMoviesAndGetAllMovies_ReturnTwo() throws Exception {
 
-        mockMvc.perform(post(API_PATH)
+        mockMvc.perform(post("/api/v1/movies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(getValidMovieWithouId())));
 
-        mockMvc.perform(post(API_PATH)
+        mockMvc.perform(post("/api/v1/movies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(getValidMovieWithouId())));
 
-        mockMvc.perform(get(API_PATH + "?page=0&size=2")
+        mockMvc.perform(get("/api/v1/movies?page=0&size=2")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(equalTo(2))));
@@ -61,14 +60,14 @@ public class MovieCRUDIntegrationTest {
     @Test
     public void createMovieAndGetById_ReturnSameTitleAndReleasedOn() throws Exception {
         Movie movie = getValidMovieWithouId();
-        MvcResult result = mockMvc.perform(post(API_PATH)
+        MvcResult result = mockMvc.perform(post("/api/v1/movies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(movie)))
                 .andReturn();
 
         Integer id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
 
-        mockMvc.perform(get(API_PATH + "/{id}", id)
+        mockMvc.perform(get("/api/v1/movies/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(movie.getTitle()))
@@ -78,7 +77,7 @@ public class MovieCRUDIntegrationTest {
     @Test
     public void createMovieAndUpdateProducers_ReturnMovieWithNewValue() throws Exception {
         Movie movie = getValidMovieWithouId();
-        MvcResult result = mockMvc.perform(post(API_PATH)
+        MvcResult result = mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(getValidMovieWithouId())))
                 .andReturn();
@@ -87,7 +86,7 @@ public class MovieCRUDIntegrationTest {
 
         String name = faker.name().name();
         movie.setProducers(name);
-        mockMvc.perform(put(API_PATH + "/{id}", id)
+        mockMvc.perform(put("/api/v1/movies/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(movie)))
                 .andExpect(status().isOk())
@@ -96,12 +95,12 @@ public class MovieCRUDIntegrationTest {
 
     @Test
     public void createMovieAndDelete_ReturnNoContent() throws Exception {
-        MvcResult result = mockMvc.perform(post(API_PATH)
+        MvcResult result = mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(getValidMovieWithouId())))
                 .andReturn();
         Integer id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
-        mockMvc.perform(delete(API_PATH + "/{id}", id)
+        mockMvc.perform(delete("/api/v1/movies/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }

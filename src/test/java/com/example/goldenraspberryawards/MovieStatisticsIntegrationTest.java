@@ -33,12 +33,11 @@ class MovieStatisticsIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
     private final Faker faker = new Faker();
-    private final String API_PATH = "/api/v1/movies";
 
     @Test
     void createFourMovies_CompareMinInterval() throws Exception {
         Movie movie = createSameMovieByYears(Lists.newArrayList(1999, 2008, 2009, 2014));
-        mockMvc.perform(get(API_PATH + "/statistics")
+        mockMvc.perform(get("/api/v1/movies/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.min", hasSize(1)))
@@ -52,7 +51,7 @@ class MovieStatisticsIntegrationTest {
     @Test
     void createFourMovies_CompareMaxIntervalConsecutive() throws Exception {
         Movie movie = createSameMovieByYears(Lists.newArrayList(1993, 1995, 1999, 2001));
-        mockMvc.perform(get(API_PATH + "/statistics")
+        mockMvc.perform(get("/api/v1/movies/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.max", hasSize(1)))
@@ -71,7 +70,7 @@ class MovieStatisticsIntegrationTest {
         Movie firstMaxThirdMin = createSameMovieByYears(Lists.newArrayList(1900, 1999, 2000));
         Movie secondtMax = createSameMovieByYears(Lists.newArrayList(2000, 2099, 2110));
 
-        MvcResult result = mockMvc.perform(get(API_PATH + "/statistics")
+        MvcResult result = mockMvc.perform(get("/api/v1/movies/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.min", hasSize(3)))
@@ -124,10 +123,10 @@ class MovieStatisticsIntegrationTest {
     }
 
     @Test
-     void createMovies_ComparedMaxIntervalNotConsecutive() throws Exception {
+    void createMovies_ComparedMaxIntervalNotConsecutive() throws Exception {
         Movie firstMax = createSameMovieByYears(Lists.newArrayList(1900, 1999, 2000));
 
-        MvcResult result = mockMvc.perform(get(API_PATH + "/statistics")
+        MvcResult result = mockMvc.perform(get("/api/v1/movies/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.max", hasSize(1)))
@@ -137,7 +136,7 @@ class MovieStatisticsIntegrationTest {
         Assertions.assertThat(minMaxInterval.getMax())
                 .isNotEmpty()
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("producer")
-                .doesNotContain( ProducerIntervalDTO.builder()
+                .doesNotContain(ProducerIntervalDTO.builder()
                         .producer(firstMax.getProducers())
                         .interval(100)
                         .previousWin(1900)
@@ -159,7 +158,7 @@ class MovieStatisticsIntegrationTest {
     }
 
     private void saveMovie(Movie movie) throws Exception {
-        mockMvc.perform(post(API_PATH)
+        mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(movie)))
                 .andExpect(status().isCreated());
