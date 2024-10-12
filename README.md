@@ -1,5 +1,11 @@
 ## Golden Raspberry Awards
 
+[![Generator Build Status][github-actions-build-image]][github-actions-url]
+[![Generator Build Status][github-actions-generator-image]][github-actions-url]
+
+[![sonar-quality-gate][sonar-quality-gate]][sonar-url] [![sonar-coverage][sonar-coverage]][sonar-url] [![sonar-bugs][sonar-bugs]][sonar-url] [![sonar-vulnerabilities][sonar-vulnerabilities]][sonar-url]
+
+
 Este projeto tem como objetivo identificar o produtor com o maior intervalo entre dois prêmios consecutivos e o produtor que obteve dois prêmios mais rapidamente.
 
 
@@ -78,3 +84,14 @@ docker run -p 8080:8080 nome-do-projeto
 ```
 http://localhost:8080/swagger-ui.html
 ```
+
+
+
+[github-actions-generator-image]:https://github.com/gustavoscarpini/golden-raspberry-awards/actions/workflows/build-docker.yml/badge.svg
+[github-actions-build-image]:https://github.com/gustavoscarpini/golden-raspberry-awards/actions/workflows/qa.yml/badge.svg
+[github-actions-url]: https://github.com/gustavoscarpini/golden-raspberry-awards/actions
+[sonar-url]: https://sonarcloud.io/dashboard?id=gustavoscarpini_golden-raspberry-awards
+[sonar-quality-gate]: https://sonarcloud.io/api/project_badges/measure?project=gustavoscarpini_golden-raspberry-awards&metric=alert_status
+[sonar-coverage]: https://sonarcloud.io/api/project_badges/measure?project=gustavoscarpini_golden-raspberry-awards&metric=coverage
+[sonar-bugs]: https://sonarcloud.io/api/project_badges/measure?project=gustavoscarpini_golden-raspberry-awards&metric=bugs
+[sonar-vulnerabilities]: https://sonarcloud.io/api/project_badges/measure?project=gustavoscarpini_golden-raspberry-awards&metric=vulnerabilities
