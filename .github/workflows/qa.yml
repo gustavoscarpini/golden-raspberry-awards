@@ -39,12 +39,14 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_URL: https://sonarcloud.io
+          SONAR_ORGANIZATION: gustavoscarpini
+          SONAR_PROJECTKEY: gustavoscarpini
         run: |
           mvn sonar:sonar \
           -Dsonar.projectKey=gustavoscarpini_golden-raspberry-awards \
           -Dsonar.organization=gustavoscarpini \
           -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       - name: Store test results
         if: always()
