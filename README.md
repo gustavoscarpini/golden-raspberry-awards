@@ -39,14 +39,13 @@ Este projeto tem como objetivo identificar o produtor com o maior intervalo entr
 
 1.	Clone o repositório:
 ```
-git clone https://github.com/seu-usuario/nome-do-repositorio.git
-cd nome-do-repositorio
+git clone https://github.com/gustavoscarpini/golden-raspberry-awards
+cd golden-raspberry-awards
 ```
 
 2. Execute o comando Maven para baixar as dependências e construir o projeto:
 ```
-git https://github.com/gustavoscarpini/golden-raspberry-awards
-cd golden-raspberry-awards
+mvn clean install
 ```
 
 3.	Inicie a aplicação:
@@ -84,8 +83,6 @@ docker run -p 8080:8080 nome-do-projeto
 ```
 http://localhost:8080/swagger-ui.html
 ```
-
-
 
 [github-actions-generator-image]:https://github.com/gustavoscarpini/golden-raspberry-awards/actions/workflows/build-docker.yml/badge.svg
 [github-actions-build-image]:https://github.com/gustavoscarpini/golden-raspberry-awards/actions/workflows/qa.yml/badge.svg
