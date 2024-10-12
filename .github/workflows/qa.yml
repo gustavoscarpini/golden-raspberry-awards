@@ -25,13 +25,9 @@ jobs:
       - name: Build with Maven and run tests
         run: mvn clean verify
 
-      - name: Install SonarCloud Scanner
-        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar
-
       - name: Run SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_URL: https://sonarcloud.io
         run: |
           mvn sonar:sonar \
           -Dsonar.projectKey=gustavoscarpini_golden-raspberry-awards \
