@@ -18,6 +18,8 @@ Este projeto tem como objetivo identificar o produtor com o maior intervalo entr
 - Swagger
 - JUnit 
 - Docker
+- GitHub Actions para CI
+- SonarCloud para Análise de Qualidade do Código
 
 #### Funcionalidades
 
@@ -68,6 +70,24 @@ http://localhost:8080/h2-console
 
 #### Executando via Docker
 
+1. Baixe a imagem Docker
+```
+docker pull gustavoscarpini/golden-raspberry-awards:latest
+
+```
+
+2.	Execute o container Docker:
+```
+docker run -p 8080:8080 gustavoscarpini/golden-raspberry-awards
+```
+
+3. Acesse o Swagger UI no navegador:
+```
+http://localhost:8080/swagger-ui.html
+```
+
+#### Contruindo e Executando via Docker
+
 1. Certifique-se de que o Docker está instalado e em execução.
 2. Construa a imagem Docker do projeto:
 ```
@@ -76,7 +96,7 @@ docker build -t goldenraspberryawards .
 
 3.	Execute o container Docker:
 ```
-docker run -p 8080:8080 nome-do-projeto
+docker run -p 8080:8080 goldenraspberryawards
 ```
 
 4.	Acesse o Swagger UI no navegador:
