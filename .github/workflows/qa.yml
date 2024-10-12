@@ -22,13 +22,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven
-
       - name: Build with Maven and run tests
         run: mvn clean verify
 
@@ -39,14 +32,12 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_URL: https://sonarcloud.io
-          SONAR_ORGANIZATION: gustavoscarpini
-          SONAR_PROJECTKEY: gustavoscarpini
         run: |
           mvn sonar:sonar \
           -Dsonar.projectKey=gustavoscarpini_golden-raspberry-awards \
           -Dsonar.organization=gustavoscarpini \
           -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       - name: Store test results
         if: always()
