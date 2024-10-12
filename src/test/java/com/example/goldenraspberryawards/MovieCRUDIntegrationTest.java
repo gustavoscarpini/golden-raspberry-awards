@@ -15,8 +15,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,7 +42,7 @@ public class MovieCRUDIntegrationTest {
     }
 
     @Test
-    public void createTwoMoviesAndGetAllMovies_ReturnGreaterThanOrEqualToTwo() throws Exception {
+    public void createTwoMoviesAndGetAllMovies_ReturnTwo() throws Exception {
 
         mockMvc.perform(post(API_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -53,10 +52,10 @@ public class MovieCRUDIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(getValidMovieWithouId())));
 
-        mockMvc.perform(get(API_PATH)
+        mockMvc.perform(get(API_PATH + "?page=0&size=2")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))));
+                .andExpect(jsonPath("$", hasSize(equalTo(2))));
     }
 
     @Test

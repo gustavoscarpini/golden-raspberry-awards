@@ -5,6 +5,8 @@ import com.example.goldenraspberryawards.model.dto.ProducerDTO;
 import com.example.goldenraspberryawards.model.dto.ProducerIntervalDTO;
 import com.example.goldenraspberryawards.repository.MovieRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,8 +28,8 @@ public class MovieService {
         return movieRepository.save(movie);
     }
 
-    public List<Movie> getAll() {
-        return movieRepository.findAll();
+    public Page<Movie> getAll(Pageable pageable) {
+        return movieRepository.findAll(pageable);
     }
 
     public Movie getById(Long id) {
@@ -37,10 +39,7 @@ public class MovieService {
     @Transactional
     public Movie update(Long id, Movie movieDetails) {
         return movieRepository.findById(id).map(movie -> {
-            movie.setTitle(movieDetails.getTitle());
-            movie.setReleasedOn(movieDetails.getReleasedOn());
-            movie.setStudios(movieDetails.getStudios());
-            movie.setProducers(movieDetails.getProducers());
+            movie.updateValues(movieDetails);
             return movieRepository.save(movie);
         }).orElse(null);
     }
@@ -54,50 +53,37 @@ public class MovieService {
     }
 
     public List<ProducerIntervalDTO> getProducersWithMinInterval() {
-        int minInterval = Integer.MAX_VALUE; // Define o valor inicial como o maior valor possível
+        int minInterval = Integer.MAX_VALUE;
         List<ProducerIntervalDTO> result = new ArrayList<>();
-        // Itera sobre os grupos de filmes por produtor
         for (ProducerDTO producerDTO : getAllMoviesGroupByProducer()) {
-            // Para cada produtor, calcula o intervalo entre prêmios consecutivos
             for (int i = 1; i < producerDTO.getMovies().size(); i++) {
                 int interval = producerDTO.getMovies().get(i).getReleasedOn() - producerDTO.getMovies().get(i - 1).getReleasedOn();
-                // Ignora intervalos zero ou negativos
                 if (interval > 0) {
-                    // Se o intervalo for menor que o minInterval, atualiza a lista e o minInterval
                     minInterval = getMaxInterval(minInterval, result, producerDTO.getName(), producerDTO.getMovies(), i, interval, interval < minInterval);
                 }
             }
         }
-        // Retorna a lista de produtores com o menor intervalo
         return result;
     }
 
     public List<ProducerIntervalDTO> getProducerWithMaxInterval() {
         int maxInterval = 0;
         List<ProducerIntervalDTO> result = new ArrayList<>();
-        // Itera sobre os grupos de filmes por produtor
         for (ProducerDTO producerDTO : getAllMoviesGroupByProducer()) {
-            // Para cada produtor, calcula o intervalo entre prêmios consecutivos
             for (int i = 1; i < producerDTO.getMovies().size(); i++) {
                 int interval = producerDTO.getMovies().get(i).getReleasedOn() - producerDTO.getMovies().get(i - 1).getReleasedOn();
                 maxInterval = getMaxInterval(maxInterval, result, producerDTO.getName(), producerDTO.getMovies(), i, interval, interval > maxInterval);
             }
         }
-        // Retorna o produtor com o maior intervalo e o filme relacionado
         return result;
     }
 
     private int getMaxInterval(int maxInterval, List<ProducerIntervalDTO> result, String producer, List<Movie> producerMovies, int i, int interval, boolean adicionar) {
         if (adicionar) {
             maxInterval = interval;
-            result.clear(); // Limpa a lista para armazenar apenas os novos
-            result.add(ProducerIntervalDTO.builder()
-                    .producer(producer)
-                    .interval(maxInterval)
-                    .previousWin(producerMovies.get(i - 1).getReleasedOn())
-                    .followingWin(producerMovies.get(i).getReleasedOn())
-                    .build());
-        } else if (interval == maxInterval) {
+            result.clear();
+        }
+        if (interval == maxInterval || adicionar) {
             result.add(ProducerIntervalDTO.builder()
                     .producer(producer)
                     .interval(maxInterval)
