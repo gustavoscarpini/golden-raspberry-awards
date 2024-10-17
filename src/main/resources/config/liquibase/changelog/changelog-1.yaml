@@ -41,30 +41,3 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     nullable: true
-  - changeSet:
-      id: 2
-      author: scarpini
-      changes:
-        - loadData:
-            file: config/liquibase/changelog/migration/movielist.csv
-            tableName: movie
-            columns:
-              - column:
-                  name: title
-                  type: STRING
-                  valueComputed: "TRIM(title)"
-              - column:
-                  name: released_on
-                  type: int8
-              - column:
-                  name: studios
-                  type: STRING
-                  valueComputed: "TRIM(studios)"
-              - column:
-                  name: producers
-                  type: STRING
-                  valueComputed: "TRIM(producers)"
-              - column:
-                  name: winner
-                  type: STRING
-                  valueComputed: "TRIM(producers)"

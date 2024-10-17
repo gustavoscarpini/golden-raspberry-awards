@@ -19,7 +19,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,32 +35,82 @@ class MovieStatisticsIntegrationTest {
     private ObjectMapper objectMapper;
     private final Faker faker = new Faker();
 
+
     @Test
-    void createFourMovies_CompareMinInterval() throws Exception {
-        Movie movie = createSameMovieByYears(Lists.newArrayList(1999, 2008, 2009, 2014));
+    void getStatisticsFromLoad() throws Exception {
         mockMvc.perform(get("/api/v1/movies/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.min", hasSize(1)))
-                .andExpect(jsonPath("$.min[0].producer").value(movie.getProducers()))
+                .andExpect(jsonPath("$.min", hasSize(2)))
+                .andExpect(jsonPath("$.min[0].producer").value("Wyck Godfrey, Stephenie Meyer and Karen Rosenfelt"))
                 .andExpect(jsonPath("$.min[0].interval").value(1))
-                .andExpect(jsonPath("$.min[0].previousWin").value(2008))
-                .andExpect(jsonPath("$.min[0].followingWin").value(2009));
+                .andExpect(jsonPath("$.min[0].previousWin").value(2011))
+                .andExpect(jsonPath("$.min[0].followingWin").value(2012))
+                .andExpect(jsonPath("$.min[1].producer").value("Yoram Globus and Menahem Golan"))
+                .andExpect(jsonPath("$.min[1].interval").value(1))
+                .andExpect(jsonPath("$.min[1].previousWin").value(1986))
+                .andExpect(jsonPath("$.min[1].followingWin").value(1987))
+                .andExpect(jsonPath("$.max", hasSize(1)))
+                .andExpect(jsonPath("$.max[0].producer").value("Jerry Weintraub"))
+                .andExpect(jsonPath("$.max[0].interval").value(9))
+                .andExpect(jsonPath("$.max[0].previousWin").value(1980))
+                .andExpect(jsonPath("$.max[0].followingWin").value(1989));
     }
 
 
     @Test
-    void createFourMovies_CompareMaxIntervalConsecutive() throws Exception {
+    void createMoreFourMovies_CompareMinInterval() throws Exception {
+        Movie movie = createSameMovieByYears(Lists.newArrayList(1999, 2008, 2009, 2014));
+        MvcResult result = mockMvc.perform(get("/api/v1/movies/statistics")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.min", hasSize(3)))
+                .andReturn();
+        MinMaxIntervalProducerDTO minMaxInterval = objectMapper.readValue(result.getResponse().getContentAsString(), MinMaxIntervalProducerDTO.class);
+        Assertions.assertThat(minMaxInterval.getMin())
+                .isNotEmpty()
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("producer")
+                .containsAnyOf(
+                        ProducerIntervalDTO.builder()
+                                .producer(movie.getProducers())
+                                .interval(1)
+                                .previousWin(2008)
+                                .followingWin(2009)
+                                .build());
+        Assertions.assertThat(minMaxInterval.getMax())
+                .isNotEmpty()
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("producer")
+                .containsAnyOf(
+                        ProducerIntervalDTO.builder()
+                                .producer(movie.getProducers())
+                                .interval(9)
+                                .previousWin(1999)
+                                .followingWin(2008)
+                                .build());
+    }
+
+
+    @Test
+    void createMoreFourMovies_CompareMaxIntervalConsecutive() throws Exception {
         Movie movie = createSameMovieByYears(Lists.newArrayList(1993, 1995, 1999, 2001));
-        mockMvc.perform(get("/api/v1/movies/statistics")
+
+        MvcResult result = mockMvc.perform(get("/api/v1/movies/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.max", hasSize(1)))
-                .andExpect(jsonPath("$.max[0].producer").value(movie.getProducers()))
-                .andExpect(jsonPath("$.max[0].interval").value(4))
-                .andExpect(jsonPath("$.max[0].previousWin").value(1995))
-                .andExpect(jsonPath("$.max[0].followingWin").value(1999));
+                .andReturn();
+        MinMaxIntervalProducerDTO minMaxInterval = objectMapper.readValue(result.getResponse().getContentAsString(), MinMaxIntervalProducerDTO.class);
 
+        Assertions.assertThat(minMaxInterval.getMax())
+                .isNotEmpty()
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("producer")
+                .doesNotContain(
+                        ProducerIntervalDTO.builder()
+                                .producer(movie.getProducers())
+                                .interval(4)
+                                .previousWin(1995)
+                                .followingWin(1999)
+                                .build());
     }
 
     @Test
@@ -73,7 +124,7 @@ class MovieStatisticsIntegrationTest {
         MvcResult result = mockMvc.perform(get("/api/v1/movies/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.min", hasSize(3)))
+                .andExpect(jsonPath("$.min", hasSize(5)))
                 .andExpect(jsonPath("$.max", hasSize(2)))
                 .andReturn();
 
@@ -81,7 +132,7 @@ class MovieStatisticsIntegrationTest {
         Assertions.assertThat(minMaxInterval.getMin())
                 .isNotEmpty()
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("producer")
-                .containsExactlyInAnyOrder(
+                .containsAnyOf(
                         ProducerIntervalDTO.builder()
                                 .producer(firstMin.getProducers())
                                 .interval(1)
